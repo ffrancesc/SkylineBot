@@ -1,8 +1,9 @@
 grammar Skyline;
 
-root : skyline EOF ;
+root : skyline EOF
+     | assig EOF ;
 
-literal : '(' NUM ',' NUM ',' NUM ')' ;
+literal : '(' NUM ',' NUM ',' NUM ')';
 
 skyline : literal
         | '(' skyline ')'
@@ -11,16 +12,12 @@ skyline : literal
         | skyline '*' NUM
         | skyline '+' skyline
         | skyline '+' NUM
-        | skyline '-' NUM
-        ;
+        | skyline '-' NUM ;
 
 assig : IDENT ':=' skyline ;
 
-DIGIT : [0-9] ;
-LLETRA : [a-z] | [A-Z] ;
-
-NUM : DIGIT+ ;
-IDENT : LLETRA (LLETRA | DIGIT)*;
+NUM : [0-9]+ ;
+IDENT : [a-zA-Z] [0-9a-zA-Z]*;
 
 
 WS : [ \n]+ -> skip ;
