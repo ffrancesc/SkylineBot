@@ -1,9 +1,9 @@
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import random
 
-class Skyline:
 
+class Skyline:
     class Edifici:
         def __init__(self, xmin, alçada, xmax):
             self.xmin = xmin
@@ -13,12 +13,11 @@ class Skyline:
         def valid(self):
             return self.xmin < self.xmax and self.alçada > 0
 
-    def __init__(self, edificis = []):
+    def __init__(self, edificis=[]):
         self.edificis = []
         if edificis:
-            ret = Skyline()
             disjunts = []
-            for e in sorted(edificis, key = lambda e : e[0]):
+            for e in sorted(edificis, key=lambda e: e[0]):
                 e = self.Edifici(e[0], e[1], e[2])
                 if e.valid():
                     afegit = False
@@ -28,13 +27,13 @@ class Skyline:
                             afegit = True
                     if not afegit:
                         s = Skyline()
-                        s.edificis = [e] 
+                        s.edificis = [e]
                         disjunts.append(s)
 
             for s in disjunts:
-                ret = ret.unio(s)
-            self.edificis = ret.edificis
+                self.edificis = self.unio(s).edificis
 
+    # Retorna un nou Skyline resultant d'unir dos Skylines.
     def unio(self, other):
         ret = Skyline()
         if not self.edificis:
@@ -61,13 +60,14 @@ class Skyline:
                 if hi == A[i].xmax and i < len(A) - 1:
                     i += 1
                 elif hi == B[j].xmax and j < len(B) - 1:
-                    j += 1 
+                    j += 1
                 for l in sorted([A[i].xmin, B[j].xmin, A[i].xmax, B[j].xmax]):
                     if l > hi:
                         hi = l
                         break
         return ret
 
+    # Retorna un nou Skyline resultant d'intersecar dos Skylines.
     def interseccio(self, other):
         ret = Skyline()
         i = j = 0
@@ -89,15 +89,7 @@ class Skyline:
 
         return ret
 
-
-    def __amplada(self):
-        return self.edificis[-1].xmax - self.edificis[0].xmin
-
-    def __fusiona_ultims(self):
-        if len(self.edificis) > 1 and self.edificis[-1].alçada == self.edificis[-2].alçada:
-            e = self.edificis.pop()
-            self.edificis[-1].xmax = e.xmax
-
+    # Retorna un nou Skyline compost per n Skylines l'un al costat de l'altre.
     def replica(self, n):
         ret = Skyline()
         a = self.__amplada()
@@ -108,6 +100,7 @@ class Skyline:
             ret.__fusiona_ultims()
         return ret
 
+    # Retorna un nou Skyline reflectit.
     def reflecteix(self):
         ret = Skyline()
         a = self.__amplada() + 2
@@ -116,6 +109,7 @@ class Skyline:
             ret.edificis.append(e)
         return ret
 
+    # Retorna un nou Skyline desplaçat en n unitats
     def desplaça(self, n):
         ret = Skyline()
         for e in self.edificis:
@@ -123,18 +117,43 @@ class Skyline:
             ret.edificis.append(e)
         return ret
 
+    # Dibuixa l'Skyline
     def plot(self):
         plt.figure()
         ctx = plt.gca()
-        alçadaMax = 0
         for e in self.edificis:
             x = e.xmin
             h = e.alçada
             w = e.xmax - e.xmin
             ctx.add_patch(Rectangle((x, 0), w, h, alpha=1))
-            alçadaMax = max(h, alçadaMax)
-        plt.axis([self.edificis[0].xmin - 1, self.edificis[-1].xmax + 1, 0, alçadaMax + 1])
+        xmin = self.edificis[0].xmin
+        xmax = self.edificis[-1].xmax
+        ymax = self.alçada()
+        plt.axis([xmin - 1, xmax + 1, 0, ymax + 1])
         plt.show()
+
+    # Retorna l'alçada de l'Skyline
+    def area(self):
+        ret = 0
+        for e in self.edificis:
+            ret += (e.xmax - e.xmin) * e.alçada
+        return ret
+
+    # Retorna l'alçada de l'Skyline
+    def alçada(self):
+        ret = 0
+        for e in self.edificis:
+            ret = max(ret, e.alçada)
+        return ret
+
+    def __amplada(self):
+        return self.edificis[-1].xmax - self.edificis[0].xmin
+
+    def __fusiona_ultims(self):
+        if len(self.edificis) > 1 and \
+           self.edificis[-1].alçada == self.edificis[-2].alçada:
+            e = self.edificis.pop()
+            self.edificis[-1].xmax = e.xmax
 
 
 def random_skyline(n, max_height, max_width, xmin, xmax):
@@ -147,6 +166,9 @@ def random_skyline(n, max_height, max_width, xmin, xmax):
     return Skyline(ed)
 
 
-#s = Skyline([[1, 1, 5],[2,1,3]])
-s = random_skyline(500,20,3000,1,10000)
-s.plot()
+# s = Skyline([[1, 1, 5],[2,1,3]])
+# s = random_skyline(500, 20, 3000, 1, 10000)
+s = Skyline([[1,2,4],[5,1,6]])
+t = Skyline([[3,2,5]])
+(s.unio(t)).plot()
+
