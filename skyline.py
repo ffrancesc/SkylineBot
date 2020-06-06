@@ -1,26 +1,47 @@
 import matplotlib.pyplot as plt 
 from matplotlib.patches import Rectangle
+import random
 
 class Skyline:
 
     class Edifici:
         def __init__(self, xmin, alçada, xmax):
-            if xmin < xmax and alçada > 0:
-                self.xmin = xmin
-                self.xmax = xmax
-                self.alçada = alçada
+            self.xmin = xmin
+            self.xmax = xmax
+            self.alçada = alçada
 
-    def __init__(self, edificis_def = []):
-    def __init__(self):
+        def valid(self):
+            return self.xmin < self.xmax and self.alçada > 0
+
+    def __init__(self, edificis = []):
         self.edificis = []
+        if edificis:
+            ret = Skyline()
+            disjunts = []
+            for e in sorted(edificis, key = lambda e : e[0]):
+                e = self.Edifici(e[0], e[1], e[2])
+                if e.valid():
+                    afegit = False
+                    for s in disjunts:
+                        if not s.edificis or s.edificis[-1].xmax <= e.xmin:
+                            s.edificis.append(e)
+                            afegit = True
+                    if not afegit:
+                        s = Skyline()
+                        s.edificis = [e] 
+                        disjunts.append(s)
+
+            for s in disjunts:
+                ret = ret.unio(s)
+            self.edificis = ret.edificis
 
     def unio(self, other):
+        ret = Skyline()
         if not self.edificis:
-            return other
+            ret.edificis = other.edificis.copy()
         elif not other.edificis:
-            return self
+            ret.edificis = self.edificis.copy()
         else:
-            ret = Skyline()
             A = self.edificis
             B = other.edificis
             i = j = 0
@@ -32,10 +53,10 @@ class Skyline:
                 alçada = 0
                 alçada += A[i].alçada if A[i].xmin <= s <= A[i].xmax else 0
                 alçada += B[j].alçada if B[j].xmin <= s <= B[j].xmax else 0
-                if alçada > 0:
-                    e = self.Edifici(lo, alçada, hi)
+                e = self.Edifici(lo, alçada, hi)
+                if e.valid():
                     ret.edificis.append(e)
-                    ret.__fusiona_ultims
+                    ret.__fusiona_ultims()
                 lo = hi
                 if hi == A[i].xmax and i < len(A) - 1:
                     i += 1
@@ -45,7 +66,7 @@ class Skyline:
                     if l > hi:
                         hi = l
                         break
-            return ret
+        return ret
 
     def interseccio(self, other):
         ret = Skyline()
@@ -67,6 +88,7 @@ class Skyline:
                 j += 1
 
         return ret
+
 
     def __amplada(self):
         return self.edificis[-1].xmax - self.edificis[0].xmin
@@ -114,9 +136,17 @@ class Skyline:
         plt.axis([self.edificis[0].xmin - 1, self.edificis[-1].xmax + 1, 0, alçadaMax + 1])
         plt.show()
 
-s = Skyline()
-t = Skyline()
-s.edificis.append(Edifici(1,1,3))
-t.edificis.append(Edifici(2,4,6))
-#s.edificis.append(Edifici(3,4,6))
-Skyline.unio(s, t).plot()
+
+def random_skyline(n, max_height, max_width, xmin, xmax):
+    ed = []
+    for _ in range(n):
+        x = random.randint(xmin, xmax)
+        h = random.randint(0, max_height)
+        w = random.randint(1, max_width)
+        ed.append([x, h, x+w])
+    return Skyline(ed)
+
+
+#s = Skyline([[1, 1, 5],[2,1,3]])
+s = random_skyline(500,20,3000,1,10000)
+s.plot()
