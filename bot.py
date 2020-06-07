@@ -10,24 +10,51 @@ from cl.SkylineParser import SkylineParser
 from cl.EvalVisitor import EvalVisitor
 
 # Constants del bot
-TEXT_GREET = "Hola! Soc el SkylineBot!"
-TEXT_AUTHOR_INFO = "Francesc Salar Gavagnach\nfrancesc.salar@est.fib.upc.edu"
-TEXT_HELP = """*Llista de totes les comandes possibles:*
-/start - Inicia la conversa amb el bot.
-/help - Mostra informació sobre totes les possibles comandes.
-/author - Mostra informatió sobre l'autor del bot.
-/lst - Mostra els identificadors definits i la seva corresponent àrea.
-/clean  - Esborra tots els identificadors definits.
+TEXT_GREET = "Hola {}, sóc el SkylineBot!"
+TEXT_NOT_START = "_ Encara no has començat cap conversa amb el bot, o si ho has fet, se li ha oblidat! Per a començar, usa /start _"
+TEXT_AUTHOR_INFO = "El meu autor és el *Francesc Salar Gavagnach*\n Correu: francesc.salar@est.fib.upc.edu"
+TEXT_HELP = """*Comandes disponibles: \n*
+/start - Inicia la conversa.
+/help - Mostra totes les possibles comandes.
+/author - Mostra l'autor del bot.
+/lst - Mostra els skylines definits i la seva corresponent àrea.
+/clean  - Esborra tots els skylines definits.
 /save id - Guarda l'skyline id.
 /load id - Carrega l'skyline id.
 """
+TEXT_SKYLINE_INFO = "àrea: {}\nalçada: {}"
+TEXT_NONE_IDENTIFIER = "No hi ha cap skyline definit encara!"
+TEXT_LIST_IDENTIFIERS = "*Skylines definits: *\n"
+TEXT_INFO_IDENTIFIER = "id: {} - àrea: {}\n"
+TEXT_ERROR_MESSAGE = "No t'he entès... 💣 "
+
+VISITOR = "visitor"
+TOKEN = open('token.txt').read().strip()
 
 
-# defineix una funció que saluda i que s'executarà amb /start
+# inicialitza el chat.
 def cmd_start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=TEXT_GREET)
+    context.user_data[VISITOR] = EvalVisitor()
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=TEXT_GREET.format(update.effective_chat.first_name))
 
 
+# decorador per assegurar que s'ha cridat /start.
+def ensure_start(func):
+    def f(update, context):
+        if VISITOR not in context.user_data:
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=TEXT_NOT_START,
+                parse_mode=telegram.ParseMode.MARKDOWN)
+        else:
+            func(update, context)
+    return f
+
+
+# mostra la llista de les commandes
+@ensure_start
 def cmd_help(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -35,6 +62,8 @@ def cmd_help(update, context):
         parse_mode=telegram.ParseMode.MARKDOWN)
 
 
+# mostra l'autor
+@ensure_start
 def cmd_author(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -42,66 +71,97 @@ def cmd_author(update, context):
         parse_mode=telegram.ParseMode.MARKDOWN)
 
 
+# llista els identificadors definits i les seves arees
+@ensure_start
 def cmd_lst(update, context):
-    None
+    ids = context.user_data[VISITOR].identificadors
+    txt = TEXT_LIST_IDENTIFIERS
+    if ids:
+        for i in ids:
+            txt += TEXT_INFO_IDENTIFIER.format(i, ids[i].area())
+    else:
+        txt = TEXT_NONE_IDENTIFIER
+
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=txt,
+        parse_mode=telegram.ParseMode.MARKDOWN)
 
 
+# borra els identificadors definits (reinstancialitzant el visitor).
+@ensure_start
 def cmd_clean(update, context):
-    None
+    context.user_data[VISITOR].identificadors = {}
 
 
+@ensure_start
 def cmd_save(update, context):
     None
 
 
+@ensure_start
 def cmd_load(update, context):
     None
 
 
+@ensure_start
 def message(update, context):
     try:
+        # agafa el text i el visitor de l'usuari.
         txt = update.message.text
+        visitor = context.user_data[VISITOR]
+
+        # tokenitza, parseja i visita
         input_stream = InputStream(txt)
         lexer = SkylineLexer(input_stream)
         token_stream = CommonTokenStream(lexer)
         parser = SkylineParser(token_stream)
         tree = parser.root()
-        visitor = EvalVisitor()
+
+        # dibuixa l'skyline resultant
         s = visitor.visit(tree)
         tmp_image = 'tmp.png'
-
         s.plot().savefig(tmp_image, bbox_inches='tight')
+
+        # contesta amb la imatge i la info de l'skyline
         context.bot.send_photo(
             chat_id=update.effective_chat.id,
             photo=open(tmp_image, 'rb'))
+
         context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text='area: {}\n alçada {}'.format(s.area(), s.alçada()))
+            text=TEXT_SKYLINE_INFO.format(s.area(), s.alçada()))
+
         os.remove(tmp_image)
-    except Exception as e:
-        print(e)
+
+    except Exception:
         context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text='💣')
-
-# declara una constant amb el access token que llegeix de token.txt
-TOKEN = open('token.txt').read().strip()
+            text=TEXT_ERROR_MESSAGE)
 
 
-matplotlib.pyplot.switch_backend('Agg')
+def main():
+    matplotlib.pyplot.switch_backend('Agg')
 
-# crea objectes per treballar amb Telegram
-updater = Updater(token=TOKEN, use_context=True)
-dispatcher = updater.dispatcher
+    # instancia els objectes de Telegram
+    updater = Updater(token=TOKEN, use_context=True)
+    dispatcher = updater.dispatcher
 
-# indica que quan el bot rebi la comanda /start s'executi la funció start
-dispatcher.add_handler(CommandHandler('start', cmd_start, pass_user_data=True))
-dispatcher.add_handler(CommandHandler('help', cmd_help))
-dispatcher.add_handler(CommandHandler('author', cmd_author))
-dispatcher.add_handler(CommandHandler('lst', cmd_lst))
-dispatcher.add_handler(CommandHandler('clean', cmd_clean))
-dispatcher.add_handler(CommandHandler('save', cmd_save))
-dispatcher.add_handler(CommandHandler('load', cmd_load))
-dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), message))
-# engega el bot
-updater.start_polling()
+    # tractament de comandes
+    dispatcher.add_handler(CommandHandler('start', cmd_start))
+    dispatcher.add_handler(CommandHandler('help', cmd_help))
+    dispatcher.add_handler(CommandHandler('author', cmd_author))
+    dispatcher.add_handler(CommandHandler('lst', cmd_lst))
+    dispatcher.add_handler(CommandHandler('clean', cmd_clean))
+    dispatcher.add_handler(CommandHandler('save', cmd_save))
+    dispatcher.add_handler(CommandHandler('load', cmd_load))
+
+    # tractament de missatges
+    dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), message))
+
+    # engega el bot
+    updater.start_polling()
+
+
+if __name__ == '__main__':
+    main()
