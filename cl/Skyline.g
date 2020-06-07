@@ -4,27 +4,29 @@ root : skyline
      | assig ;
 
 
-edifici : '(' NUM ',' NUM ',' NUM ')' ;
+edifici : '(' num ',' num ',' num ')' ;
 
-edificis : edifici | edificis ',' edifici ;
+edificis : edifici  (',' edifici)*;
 
 simple : edifici ;
 
 compost : '[' edificis ']' ;
 
-random : '{' NUM ',' NUM ',' NUM ',' NUM ',' NUM '}' ;
+random : '{' num ',' num ',' num ',' num ',' num '}' ;
+
+num : NUM ;
 
 skyline : simple
         | compost
         | random
-        | IDENT /*
+        | IDENT
         | '(' skyline ')'
         | '-' skyline
         | skyline '*' skyline
-        | skyline '*' NUM
+        | skyline '*' num
         | skyline '+' skyline
-        | skyline '+' NUM
-        | skyline '-' NUM */ ;
+        | skyline '+' num
+        | skyline '-' num ;
 
 assig : IDENT ':=' skyline ;
 
