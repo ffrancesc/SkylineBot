@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from matplotlib.ticker import MaxNLocator
 
 
 class Skyline:
@@ -30,10 +31,10 @@ class Skyline:
                         disjunts.append(s)
 
             for s in disjunts:
-                self.edificis = self.unio(s).edificis
+                self.edificis = self.uneix(s).edificis
 
     # Retorna un nou Skyline resultant d'unir dos Skylines.
-    def unio(self, other):
+    def uneix(self, other):
         ret = Skyline()
         if not self.edificis:
             ret.edificis = other.edificis.copy()
@@ -67,7 +68,7 @@ class Skyline:
         return ret
 
     # Retorna un nou Skyline resultant d'intersecar dos Skylines.
-    def interseccio(self, other):
+    def interseca(self, other):
         ret = Skyline()
         i = j = 0
         A = self.edificis

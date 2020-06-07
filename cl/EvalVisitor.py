@@ -63,7 +63,7 @@ class EvalVisitor(SkylineVisitor):
             return self.visit(l[0])
         elif len(l) == 2:
             s = self.visit(l[1])
-            return s.reflexa()
+            return s.reflecteix()
         elif len(l) == 3:
             if l[0].getText() == "(":
                 return self.visit(l[1])
@@ -81,9 +81,9 @@ class EvalVisitor(SkylineVisitor):
                     if arg2Type == "num":
                         return arg1.desplaça(arg2)
                     else:
-                        return arg1.unio(arg2)
+                        return arg1.uneix(arg2)
                 elif op == "-":
-                    return arg1.reflecteix()
+                    return arg1.desplaça(-arg2)
 
     def visitAssig(self, ctx:SkylineParser.AssigContext):
         ident = ctx.getChild(0).getText()
