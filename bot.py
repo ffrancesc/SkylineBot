@@ -59,7 +59,30 @@ def cmd_load(update, context):
 
 
 def message(update, context):
-    None
+    try:
+        txt = update.message.text
+        input_stream = InputStream(txt)
+        lexer = SkylineLexer(input_stream)
+        token_stream = CommonTokenStream(lexer)
+        parser = SkylineParser(token_stream)
+        tree = parser.root()
+        visitor = EvalVisitor()
+        s = visitor.visit(tree)
+        tmp_image = 'tmp.png'
+
+        s.plot().savefig(tmp_image, bbox_inches='tight')
+        context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=open(tmp_image, 'rb'))
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text='area: {}\n alçada {}'.format(s.area(), s.alçada()))
+        os.remove(tmp_image)
+    except Exception as e:
+        print(e)
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text='💣')
 
 # declara una constant amb el access token que llegeix de token.txt
 TOKEN = open('token.txt').read().strip()
