@@ -1,3 +1,5 @@
+from skyline import Skyline
+import random
 if __name__ is not None and "." in __name__:
     from .SkylineParser import SkylineParser
     from .SkylineVisitor import SkylineVisitor
@@ -5,17 +7,15 @@ else:
     from SkylineParser import SkylineParser
     from SkylineVisitor import SkylineVisitor
 
-from skyline import Skyline
-
-import random
-
-idents = {}
 
 class EvalVisitor(SkylineVisitor):
+    def __init__(self):
+        self.identificadors = {}
+
     def visitRoot(self, ctx:SkylineParser.RootContext):
         n = next(ctx.getChildren())
         return self.visit(n)
-    
+
     def visitEdifici(self, ctx:SkylineParser.EdificiContext):
         xmin = self.visit(ctx.getChild(1))
         alçada = self.visit(ctx.getChild(3))
@@ -32,7 +32,7 @@ class EvalVisitor(SkylineVisitor):
     def visitSimple(self, ctx:SkylineParser.SimpleContext):
         ed = self.visit(ctx.getChild(0))
         return Skyline([ed])
-    
+
     def visitCompost(self, ctx:SkylineParser.CompostContext):
         eds = self.visit(ctx.getChild(1))
         return Skyline(eds)
@@ -55,16 +55,16 @@ class EvalVisitor(SkylineVisitor):
         return int(ctx.getChild(0).getText())
 
     def visitIdent(self, ctx:SkylineParser.IdentContext):
-        return idents[ctx.getChild(0).getText()]
+        return self.identificadors[ctx.getChild(0).getText()]
 
     def visitSkyline(self, ctx:SkylineParser.SkylineContext):
-        l = [n for n in ctx.getChildren()]        
+        l = [n for n in ctx.getChildren()]
         if len(l) == 1:
             return self.visit(l[0])
         elif len(l) == 2:
             s = self.visit(l[1])
             return s.reflexa()
-        elif len(l)  == 3:
+        elif len(l) == 3:
             if l[0].getText() == "(":
                 return self.visit(l[1])
             else:
@@ -83,10 +83,10 @@ class EvalVisitor(SkylineVisitor):
                     else:
                         return arg1.unio(arg2)
                 elif op == "-":
-                    return arg1.reflexa()
-        
+                    return arg1.reflecteix()
+
     def visitAssig(self, ctx:SkylineParser.AssigContext):
-        ident = self.visit(ctx.getChild(0))
+        ident = ctx.getChild(0).getText()
         skyli = self.visit(ctx.getChild(2))
-        idents[ident] = skyli
+        self.identificadors[ident] = skyli
         return skyli
