@@ -9,7 +9,7 @@ from skyline import Skyline
 
 import random
 
-idents = []
+idents = {}
 
 class EvalVisitor(SkylineVisitor):
     def visitRoot(self, ctx:SkylineParser.RootContext):
@@ -38,7 +38,6 @@ class EvalVisitor(SkylineVisitor):
         return Skyline(eds)
 
     def visitRandom(self, ctx:SkylineParser.RandomContext):
-        l = [n for n in ctx.getChildren()]
         n = self.visit(ctx.getChild(1))
         h = self.visit(ctx.getChild(3))
         w = self.visit(ctx.getChild(5))
@@ -55,25 +54,39 @@ class EvalVisitor(SkylineVisitor):
     def visitNum(self, ctx:SkylineParser.NumContext):
         return int(ctx.getChild(0).getText())
 
+    def visitIdent(self, ctx:SkylineParser.IdentContext):
+        return idents[ctx.getChild(0).getText()]
+
     def visitSkyline(self, ctx:SkylineParser.SkylineContext):
         l = [n for n in ctx.getChildren()]        
-        if ctx.getChildCount() == 1:
-            n = next(ctx.getChildren())
-            if n.getText()[0].isalpha():
-                return idents[n.getText()]
-            else: 
-                return self.visit(n)
-        elif ctx.getChildCount() == 2:
+        if len(l) == 1:
+            return self.visit(l[0])
+        elif len(l) == 2:
             s = self.visit(l[1])
             return s.reflexa()
+        elif len(l)  == 3:
+            if l[0].getText() == "(":
+                return self.visit(l[1])
+            else:
+                op = l[1].getText()
+                arg1 = self.visit(l[0])
+                arg2 = self.visit(l[2])
+                arg2Type = SkylineParser.ruleNames[l[2].getRuleIndex()]
+                if op == "*":
+                    if arg2Type == "num":
+                        return arg1.replica(arg2)
+                    else:
+                        return arg1.interseca(arg2)
+                elif op == "+":
+                    if arg2Type == "num":
+                        return arg1.desplaça(arg2)
+                    else:
+                        return arg1.unio(arg2)
+                elif op == "-":
+                    return arg1.reflexa()
         
-        elif ctx.getChildCount() == 3:
-            None
-            
-    
     def visitAssig(self, ctx:SkylineParser.AssigContext):
-        l = [n for n in ctx.getChildren()]
-        ident = l[0].getText()
-        s = self.visit(l[2])
-        idents[ident] = s
-        return s
+        ident = self.visit(ctx.getChild(0))
+        skyli = self.visit(ctx.getChild(2))
+        idents[ident] = skyli
+        return skyli

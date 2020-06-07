@@ -3,7 +3,6 @@ grammar Skyline;
 root : skyline
      | assig ;
 
-
 edifici : '(' num ',' num ',' num ')' ;
 
 edificis : edifici  (',' edifici)*;
@@ -14,12 +13,10 @@ compost : '[' edificis ']' ;
 
 random : '{' num ',' num ',' num ',' num ',' num '}' ;
 
-num : NUM ;
-
 skyline : simple
         | compost
         | random
-        | IDENT
+        | ident
         | '(' skyline ')'
         | '-' skyline
         | skyline '*' skyline
@@ -28,7 +25,11 @@ skyline : simple
         | skyline '+' num
         | skyline '-' num ;
 
-assig : IDENT ':=' skyline ;
+assig : ident ':=' skyline ;
+
+num : NUM ;
+
+ident : IDENT;
 
 NUM : [0-9]+ ;
 IDENT : [a-zA-Z] [0-9a-zA-Z]*;

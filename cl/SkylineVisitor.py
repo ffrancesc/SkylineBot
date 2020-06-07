@@ -39,11 +39,6 @@ class SkylineVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by SkylineParser#num.
-    def visitNum(self, ctx:SkylineParser.NumContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by SkylineParser#skyline.
     def visitSkyline(self, ctx:SkylineParser.SkylineContext):
         return self.visitChildren(ctx)
@@ -51,6 +46,16 @@ class SkylineVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by SkylineParser#assig.
     def visitAssig(self, ctx:SkylineParser.AssigContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by SkylineParser#num.
+    def visitNum(self, ctx:SkylineParser.NumContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by SkylineParser#ident.
+    def visitIdent(self, ctx:SkylineParser.IdentContext):
         return self.visitChildren(ctx)
 
 
