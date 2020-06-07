@@ -23,36 +23,49 @@ TEXT_HELP = """*Llista de totes les comandes possibles:*
 """
 
 
-# defineix una funció que saluda i que s'executarà quan el bot rebi el missatge /start
+# defineix una funció que saluda i que s'executarà amb /start
 def cmd_start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text=TEXT_GREET)
-    
+
+
 def cmd_help(update, context):
     context.bot.send_message(
-        chat_id=update.effective_chat.id, 
+        chat_id=update.effective_chat.id,
         text=TEXT_HELP,
         parse_mode=telegram.ParseMode.MARKDOWN)
 
+
 def cmd_author(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=TEXT_AUTHOR_INFO, parse_mode=telegram.ParseMode.MARKDOWN)
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=TEXT_AUTHOR_INFO,
+        parse_mode=telegram.ParseMode.MARKDOWN)
+
 
 def cmd_lst(update, context):
     None
 
+
 def cmd_clean(update, context):
     None
+
 
 def cmd_save(update, context):
     None
 
+
 def cmd_load(update, context):
     None
+
 
 def message(update, context):
     None
 
 # declara una constant amb el access token que llegeix de token.txt
 TOKEN = open('token.txt').read().strip()
+
+
+matplotlib.pyplot.switch_backend('Agg')
 
 # crea objectes per treballar amb Telegram
 updater = Updater(token=TOKEN, use_context=True)
