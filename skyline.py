@@ -121,11 +121,13 @@ class Skyline:
     def plot(self):
         fig = plt.figure()
         ctx = plt.gca()
+        ctx.xaxis.set_major_locator(MaxNLocator(integer=True))
+        ctx.yaxis.set_major_locator(MaxNLocator(integer=True))
         for e in self.edificis:
             x = e.xmin
             h = e.alçada
             w = e.xmax - e.xmin
-            ctx.add_patch(Rectangle((x, 0), w, h, alpha=1))
+            ctx.add_patch(Rectangle((x, 0), w, h, alpha=1, color='black'))
         xmin = self.edificis[0].xmin
         xmax = self.edificis[-1].xmax
         ymax = self.alçada()
