@@ -1,21 +1,40 @@
 # importa l'API de Telegram
 import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import constants
+from antlr4 import *
+import matplotlib
+import os
+
+from cl.SkylineLexer import SkylineLexer
+from cl.SkylineParser import SkylineParser
+from cl.EvalVisitor import EvalVisitor
+
+# Constants del bot
+TEXT_GREET = "Hola! Soc el SkylineBot!"
+TEXT_AUTHOR_INFO = "Francesc Salar Gavagnach\nfrancesc.salar@est.fib.upc.edu"
+TEXT_HELP = """*Llista de totes les comandes possibles:*
+/start - Inicia la conversa amb el bot.
+/help - Mostra informació sobre totes les possibles comandes.
+/author - Mostra informatió sobre l'autor del bot.
+/lst - Mostra els identificadors definits i la seva corresponent àrea.
+/clean  - Esborra tots els identificadors definits.
+/save id - Guarda l'skyline id.
+/load id - Carrega l'skyline id.
+"""
+
 
 # defineix una funció que saluda i que s'executarà quan el bot rebi el missatge /start
 def cmd_start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=constants.TEXT_GREET)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=TEXT_GREET)
     
 def cmd_help(update, context):
     context.bot.send_message(
         chat_id=update.effective_chat.id, 
-        text=constants.TEXT_HELP,
-        parse_mode=telegram.ParseMode.MARKDOWN
-    )
+        text=TEXT_HELP,
+        parse_mode=telegram.ParseMode.MARKDOWN)
 
 def cmd_author(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=constants.TEXT_AUTHOR_INFO, parse_mode=telegram.ParseMode.MARKDOWN)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=TEXT_AUTHOR_INFO, parse_mode=telegram.ParseMode.MARKDOWN)
 
 def cmd_lst(update, context):
     None
