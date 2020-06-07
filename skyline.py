@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
-import random
 
 
 class Skyline:
@@ -119,7 +118,7 @@ class Skyline:
 
     # Dibuixa l'Skyline
     def plot(self):
-        plt.figure()
+        fig = plt.figure()
         ctx = plt.gca()
         for e in self.edificis:
             x = e.xmin
@@ -130,7 +129,7 @@ class Skyline:
         xmax = self.edificis[-1].xmax
         ymax = self.alçada()
         plt.axis([xmin - 1, xmax + 1, 0, ymax + 1])
-        plt.show()
+        return fig
 
     # Retorna l'alçada de l'Skyline
     def area(self):
@@ -154,21 +153,3 @@ class Skyline:
            self.edificis[-1].alçada == self.edificis[-2].alçada:
             e = self.edificis.pop()
             self.edificis[-1].xmax = e.xmax
-
-
-def random_skyline(n, max_height, max_width, xmin, xmax):
-    ed = []
-    for _ in range(n):
-        x = random.randint(xmin, xmax)
-        h = random.randint(0, max_height)
-        w = random.randint(1, max_width)
-        ed.append([x, h, x+w])
-    return Skyline(ed)
-
-
-# s = Skyline([[1, 1, 5],[2,1,3]])
-# s = random_skyline(500, 20, 3000, 1, 10000)
-s = Skyline([[1,2,4],[5,1,6]])
-t = Skyline([[3,2,5]])
-(s.unio(t)).plot()
-
