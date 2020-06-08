@@ -1,3 +1,4 @@
+# encoding: utf-8
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import MaxNLocator

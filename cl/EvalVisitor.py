@@ -1,3 +1,4 @@
+# encoding: utf-8
 from skyline import Skyline
 import random
 if __name__ is not None and "." in __name__:
