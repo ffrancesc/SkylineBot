@@ -31,7 +31,7 @@ class Skyline:
                         disjunts.append(s)
 
             for s in disjunts:
-                self.edificis = self.uneix(s).edificis
+                self.edificis = (self.uneix(s)).edificis
 
     # Retorna un nou Skyline resultant d'unir dos Skylines.
     def uneix(self, other):

@@ -46,9 +46,9 @@ class EvalVisitor(SkylineVisitor):
         eds = []
         for _ in range(n):
             x = random.randint(xmin, xmax)
-            h = random.randint(0, h)
-            w = random.randint(1, w)
-            eds.append([x, h, x+w])
+            alçada = random.randint(0, h)
+            amplada = random.randint(1, w)
+            eds.append([x, alçada, x+amplada])
         return Skyline(eds)
 
     def visitNum(self, ctx:SkylineParser.NumContext):
