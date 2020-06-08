@@ -1,6 +1,6 @@
 # SkylineBot
 
-Aquest projecte conté el codi per a instalar i executar SkylineBot, un bot de Telegram que gestiona la manipulació d’Skylines via un intèrpret. Es pot trobar tota la informació relativa al projecte a l'[enunciat] (https://gebakx.github.io/SkylineBot/).
+Aquest projecte conté el codi per a instalar i executar SkylineBot, un bot de Telegram que gestiona la manipulació d’Skylines via un intèrpret. Es pot trobar tota la informació relativa al projecte a l'[enunciat](https://gebakx.github.io/SkylineBot/).
 
 ## Començant
 
@@ -31,4 +31,4 @@ Una vegada el bot s'està executant, pots parlar-hi usant les comandes i la sint
 
 ## Autor
 
-* **Francesc Salar Gavagnach** ([francesc.salar@est.fib.upc.edu])(mailto:rfrancesc.salar@est.fib.upc.edu)
+* **Francesc Salar Gavagnach** [francesc.salar@est.fib.upc.edu](mailto:rfrancesc.salar@est.fib.upc.edu)
