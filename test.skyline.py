@@ -5,7 +5,7 @@ from cl.SkylineParser import SkylineParser
 from cl.EvalVisitor import EvalVisitor
 import matplotlib
 
-input_stream = InputStream("-{5000,50,50,1,100}")
+input_stream = InputStream(input('? '))
 lexer = SkylineLexer(input_stream)
 token_stream = CommonTokenStream(lexer)
 parser = SkylineParser(token_stream)
