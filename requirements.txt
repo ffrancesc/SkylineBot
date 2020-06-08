@@ -1,3 +1,2 @@
 python-telegram-bot==11.1.0
-pickle
-matplotlib
+matplotlib==2.2.2
