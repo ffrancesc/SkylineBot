@@ -27,7 +27,7 @@ python bot.py
 
 ## Parlant amb el bot
 
-Una vegada el bot s'està executant, pots parlar-hi usant les comandes i la sintaxi explicada a l'[enunciat](https://gebakx.github.io/SkylineBot/). Abans  de tot però, per a establir una conexió, accedeix a la [web](t.me/FrancescSkylineBot) en teu navegador i clica Send Message. Aleshores, a Telegram, clica Start i ja podràs parlar-hi!
+Una vegada el bot s'està executant, pots parlar-hi usant les comandes i la sintaxi explicada a l'[enunciat](https://gebakx.github.io/SkylineBot/). Abans  de tot però, per a establir una conexió, accedeix a la [web](https://t.me/FrancescSkylineBot) en teu navegador i clica Send Message. Aleshores, a Telegram, clica Start i ja podràs parlar-hi!
 
 ## Autor
 
