@@ -1,5 +1,4 @@
 # encoding: utf-8
-import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from antlr4 import *
 import matplotlib
@@ -189,7 +188,7 @@ def message_txt(update, context):
 def main():
     matplotlib.pyplot.switch_backend('Agg')
     # instancia els objectes de Telegram
-    updater = Updater(token=TOKEN, use_context=True)
+    updater = Updater(token=TOKEN)
     dispatcher = updater.dispatcher
 
     # tractament de comandes
