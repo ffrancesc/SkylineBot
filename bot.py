@@ -147,7 +147,6 @@ def message_document(update, context):
             text=TEXT_LOAD_SUCESS.format(ident))
         del context.user_data[LOADING]
     else:
-        print("JODER")
         context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=TEXT_ERROR_DOCUMENT)
