@@ -153,7 +153,6 @@ class Skyline:
         return self.edificis[-1].xmax - self.edificis[0].xmin
 
     def __fusiona_ultims(self):
-        if len(self.edificis) > 1 and \
-           self.edificis[-1].alçada == self.edificis[-2].alçada:
+        if len(self.edificis) > 1 and self.edificis[-1].alçada == self.edificis[-2].alçada:
             e = self.edificis.pop()
             self.edificis[-1].xmax = e.xmax

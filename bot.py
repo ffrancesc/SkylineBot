@@ -1,4 +1,5 @@
 # encoding: utf-8
+import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from antlr4 import *
 import matplotlib
@@ -22,7 +23,7 @@ TEXT_HELP = '''*Comandes disponibles: \n*
 /save id - Guarda l'skyline id.
 /load id - Carrega l'skyline id.
 '''
-TEXT_SKYLINE_INFO = 'àrea: {}\nalcada: {}'
+TEXT_SKYLINE_INFO = 'àrea: {}\nalçada: {}'
 TEXT_NONE_IDENTIFIER = 'No hi ha cap skyline definit encara!'
 TEXT_LIST_IDENTIFIERS = '*Skylines definits: *\n'
 TEXT_INFO_IDENTIFIER = 'id: {} - àrea: {}\n'
@@ -175,8 +176,7 @@ def message_txt(update, context):
 
         context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=TEXT_SKYLINE_INFO.format(s.area(), s.alcada()))
-
+            text=TEXT_SKYLINE_INFO.format(s.area(), s.alçada()))
         os.remove('tmp.png')
 
     except Exception:
@@ -188,7 +188,7 @@ def message_txt(update, context):
 def main():
     matplotlib.pyplot.switch_backend('Agg')
     # instancia els objectes de Telegram
-    updater = Updater(token=TOKEN)
+    updater = Updater(token=TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 
     # tractament de comandes
@@ -202,7 +202,7 @@ def main():
 
     # tractament de missatges
     dispatcher.add_handler(MessageHandler(Filters.text & (~Filters.command), message_txt))
-    dispatcher.add_handler(MessageHandler(Filters.document, message_document))
+    dispatcher.add_handler(MessageHandler(Filters.document & ~(Filters.text | Filters.command), message_document))
     # engega el bot
     updater.start_polling()
 
